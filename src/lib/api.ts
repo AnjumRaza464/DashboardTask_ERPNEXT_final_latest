@@ -1,6 +1,6 @@
 import type { Range } from "./types";
 
-export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000").replace(/\/$/, "");
+export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/\/$/, "");
 
 export class ApiError extends Error {
   status: number;
@@ -24,7 +24,7 @@ export async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T
     res = await fetch(url, { signal, headers: { Accept: "application/json" } });
   } catch (e) {
     if ((e as Error).name === "AbortError") throw e;
-    throw new ApiError("Backend unreachable. Is the FastAPI server running on " + API_BASE + "?", 0);
+    throw new ApiError("Backend unreachable" + (API_BASE ? " at " + API_BASE : "") + ". Is the FastAPI server running?", 0);
   }
   if (!res.ok) {
     let detail = res.statusText;

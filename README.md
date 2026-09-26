@@ -5,7 +5,8 @@ Live sales and accounting dashboard for the **Sindh Bakery** company on ERPNext
 
 ```
 backend/   FastAPI proxy in front of the ERPNext REST API (holds the API key/secret)
-frontend/  Next.js (App Router) + Tailwind CSS + Recharts dashboard
+api/       Vercel entry point (api/index.py) that serves the same FastAPI app
+src/       Next.js (App Router) + Tailwind CSS + Recharts dashboard (repo root is the Next.js app)
 ```
 
 The browser only ever talks to the FastAPI backend. ERPNext credentials live in
@@ -23,17 +24,27 @@ copy .env.example .env          # then fill in ERPNEXT_API_KEY / ERPNEXT_API_SEC
 .\.venv\Scripts\python -m uvicorn app.main:app --port 8000
 ```
 
-Frontend (port **3000**):
+Frontend (port **3000**, run from the repo root):
 
 ```powershell
-cd frontend
 npm install                     # first time only
 npm run dev                     # or: npm run build && npm run start
 ```
 
-Open http://localhost:3000. `frontend/.env.local` points at the backend
-(`NEXT_PUBLIC_API_BASE=http://localhost:8000`); `backend/.env` allows that origin
-via `FRONTEND_ORIGINS`.
+Open http://localhost:3000. In development `next.config.ts` proxies `/api/*` to the
+FastAPI server (`BACKEND_URL` in `.env.local`, default `http://127.0.0.1:8000`), so the
+browser only ever talks to one origin.
+
+## Deploy (Vercel)
+
+The repo deploys as a single Vercel project: the Next.js app at the root plus the
+FastAPI backend as a Python serverless function (`api/index.py`, routed via
+`vercel.json`, dependencies from `requirements.txt`). Set these environment
+variables in the Vercel project (same names as `backend/.env.example`):
+
+`ERPNEXT_URL`, `ERPNEXT_API_KEY`, `ERPNEXT_API_SECRET`, `ERPNEXT_COMPANY`,
+`CACHE_TTL_SECONDS` (optional). `FRONTEND_ORIGINS` is not needed on Vercel because
+frontend and API share one origin.
 
 ## Backend API
 

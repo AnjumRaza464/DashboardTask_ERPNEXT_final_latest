@@ -1,6 +1,30 @@
+# python backend
 backend/.venv/
 backend/.env
 **/__pycache__/
-frontend/node_modules/
-frontend/.next/
-frontend/.env.local
+*.pyc
+
+# node / next.js
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (examples are committed)
+.env
+.env.*
+!.env.example
+
+# vercel
+.vercel
+
+# misc
+.DS_Store
+*.pem
